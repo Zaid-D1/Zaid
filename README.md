@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Scanner;
-
 public class Main {
 
 	static HashMap<String,Room> roomList = new HashMap<String, Room>();
