@@ -1,70 +1,54 @@
-public class Main {
+class Room {
 
-	static HashMap<String,Room> roomList = new HashMap<String, Room>();
-	static String currentRoom;
-	static boolean isPlaying = true;
+	private String title;
+	private String description;	
+	private String N,S,E,W;
 	
-	public static void main(String[] args) {
-		setup();
-		
-		System.out.println("Welcome");
-		lookAtRoom(true);		
-		
-		while(isPlaying) {
-			String command = getCommand().toLowerCase();
-			//command = preProcessCommand();
-			String word1 = command.split(" ")[0];			
-			
-			switch(word1) {
-			case "n": case "s": case "w": case "e": case "u": case "d":
-			case "north": case "south": case "west": case "east": case "up": case "down":
-				moveToRoom(word1.charAt(0));
-				break;
-			case "i": case "inventory":
-				showInventory();
-				break;	
-			case "look":
-				lookAtRoom(true);
-				break;
-			}
+	// items in this room FIXME (should this be private?)
+	ArrayList<Item> itemList = new ArrayList<Item>();
+	
+	Room(String t, String d) {
+		title = t;
+		description = d;
+	}
+	
+	//FIXME should this be private?
+	private void setExits(String N, String S, String W, String E) {
+		this.N = N;
+		this.S = S;
+		this.W = W;
+		this.E = E;		
+	}
+	
+	String getExit(char c) {
+		switch (c) {
+		case 'n': return this.N;
+		case 's': return this.S;
+		case 'w': return this.W;
+		case 'e': return this.E;
+		default: return null;
 		}
 	}
 	
-	//This will crash if you move to a room that does not exist in the hashmap.
-	static void moveToRoom(char dir) {
-		String newRoom = roomList.get(currentRoom).getExit(dir);
-		
-		if (newRoom.length()==0) {
-			System.out.println("You can't go that way");
-			return;
-		}
-		
-		currentRoom = newRoom;		
-		lookAtRoom(false);		
-	}
-
-	private static void lookAtRoom(boolean b) {
-		Room rm = roomList.get(currentRoom);
-		System.out.println("\n== " + rm.getTitle() + " ==");
-		System.out.println(rm.getDesc());	
-		
-	}
-
-	private static void showInventory() {
-		// TODO Auto-generated method stub		
-	}
-
-	static Scanner sc = new Scanner(System.in);
-	static String getCommand() {
-		System.out.print("=> ");		
-		String text = sc.nextLine();
-		if (text.length() == 0) text = "qwerty"; //default command		
-		return text;
-	}
+	String getTitle() {return title;}
+	String getDesc() {return description;}
 	
-	static void setup() {
-		Room.setupRooms(roomList);
-		currentRoom = "Middle of the Ocean";  //where you start
+	//ONLY done at the beginning of the game
+	static void setupRooms(HashMap<String,Room> roomList) {
+		Room r = new Room("Back yard", "The garden is peaceful with flowers, birds");
+		//          N S W E
+		r.setExits("", "park", "den", "kitchen");
+		roomList.put("backyard", r);
+		
+		r = new Room("The Kitchen", "You see a fridge, stove, cubpoards. "
+				+ "The hallway is to the west, east takes you to the back yard");
+		r.setExits("", "", "hall1", "backyard");
+		roomList.put("kitchen", r);
+		
+		r = new Room("Hallway", "The front hallway connects the front door to the kitchen, living room,"
+				+ " bedrooms (south) and den (down)"); 
+		r.setExits("frontYard", "bedroom1", "livingroom", "kitchen");
+		roomList.put("hall1", r);
 	}
-
 }
+  
